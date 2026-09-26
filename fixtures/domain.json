@@ -1,26 +1,335 @@
 {
   "domain": "robot-graduation",
-  "version": 1,
+  "version": 2,
   "facts": [
     "四台机器人经过两个多月培训和实战后获得毕业身份",
     "机器人类型包括导览、巡检和钢琴表演",
-    "毕业后将进入场馆、学校、工厂和海外场景"
+    "毕业后将进入场馆、学校、工厂和海外场景",
+    "导览机器人 R-HZ-2026-007 部署于京杭大运河典藏馆，更换激光雷达后部分能力仍在复验",
+    "巡检机器人 R-HZ-2026-012 经历模型升级、异地试岗与退回返修，撤销原认证后重新赋码并交接海外"
   ],
   "entities": [
     "机器人身份",
-    "软硬件配置",
-    "训练任务",
+    "硬件配置",
+    "软件版本",
+    "课程任务",
+    "实战记录",
+    "故障处置",
+    "能力证据",
     "能力认证",
-    "部署交接"
+    "毕业码",
+    "变更与复验",
+    "身份事件链",
+    "岗位交接视图"
   ],
   "rules": [
-    "毕业码只能引用已通过能力",
-    "配置变化会触发相关能力复验",
-    "接收单位只获得岗位所需资料"
+    "毕业码只能引用签发时已通过且当前仍有效的能力认证",
+    "训练资料允许离线补传，补传上传时间不得早于实际记录时间",
+    "同一台设备的能力认证须经多方签署（至少两个不同单位）才生效",
+    "部署地点、模型或硬件发生变化，受影响能力自动进入复验，复验通过前不得给出当前通过结论",
+    "复验通过须留存变化后新基线上的能力证据",
+    "试岗反馈、退回返修、证书撤销等事件沿原机器人身份追加，事件链只追加不改写",
+    "证书撤销后引用该证书的毕业码立即失效；重新认证通过后沿同一身份重新赋码",
+    "接收方只获得岗位所需能力的当前结论，学校保留从课堂到职场的完整历史"
   ],
   "sample": {
-    "record_id": "demo-016",
-    "status": "已登记",
-    "source": "公开示例"
+    "organizations": [
+      { "org_id": "ORG-SCHOOL", "name": "杭州机器人学校", "role": "培养与发证方" },
+      { "org_id": "ORG-MUSEUM", "name": "京杭大运河典藏馆", "role": "场馆接收方" },
+      { "org_id": "ORG-FACTORY", "name": "华东精工装备厂", "role": "工厂实训与返修方" },
+      { "org_id": "ORG-OVERSEAS", "name": "南洋星港仓储园", "role": "海外接收方" }
+    ],
+    "robots": [
+      {
+        "robot_id": "R-HZ-2026-007",
+        "name": "小舟",
+        "robot_type": "导览",
+        "capabilities": [
+          { "capability_id": "C071", "name": "中英双语讲解与问答" },
+          { "capability_id": "C072", "name": "人流中避障导览" },
+          { "capability_id": "C073", "name": "夜间闭馆巡场播报" }
+        ],
+        "hardware_configs": [
+          {
+            "config_id": "HW-007-1",
+            "effective_from": "2026-06-12",
+            "components": ["单线激光雷达 NAV-100", "环形麦克风阵列", "双目摄像头", "伺服底盘"]
+          },
+          {
+            "config_id": "HW-007-2",
+            "effective_from": "2026-09-10",
+            "supersedes": "HW-007-1",
+            "change_summary": "激光雷达 NAV-100 更换为 NAV-200",
+            "components": ["单线激光雷达 NAV-200", "环形麦克风阵列", "双目摄像头", "伺服底盘"]
+          }
+        ],
+        "software_versions": [
+          {
+            "software_id": "SW-007-1",
+            "effective_from": "2026-06-15",
+            "stack": "导览大脑 NaviGuide 1.4",
+            "model": "pangu-tour v3"
+          }
+        ],
+        "course_tasks": [
+          { "task_id": "T-007-1", "name": "校园访客引导", "recorded_at": "2026-06-20", "uploaded_at": "2026-06-20", "venue": "学校" },
+          { "task_id": "T-007-2", "name": "嘈杂大厅语音交互", "recorded_at": "2026-07-02", "uploaded_at": "2026-07-06", "venue": "工厂实训车间（无外网，离线补传）" },
+          { "task_id": "T-007-3", "name": "应急疏散口播", "recorded_at": "2026-07-20", "uploaded_at": "2026-07-20", "venue": "学校" }
+        ],
+        "field_records": [
+          { "record_id": "FR-007-1", "scenario": "校史展厅开放日全天导览", "recorded_at": "2026-07-12", "uploaded_at": "2026-07-12", "config_id": "HW-007-1", "software_id": "SW-007-1" },
+          { "record_id": "FR-007-2", "scenario": "典藏馆夜场撤展暗光彩排", "recorded_at": "2026-08-03", "uploaded_at": "2026-08-05", "config_id": "HW-007-1", "software_id": "SW-007-1" },
+          { "record_id": "FR-007-3", "scenario": "园区户外人流高峰引导", "recorded_at": "2026-08-16", "uploaded_at": "2026-08-16", "config_id": "HW-007-1", "software_id": "SW-007-1" },
+          { "record_id": "FR-007-4", "scenario": "典藏馆开馆后新雷达避障复测", "recorded_at": "2026-09-18", "uploaded_at": "2026-09-18", "config_id": "HW-007-2", "software_id": "SW-007-1" }
+        ],
+        "faults": [
+          {
+            "fault_id": "FLT-007-1",
+            "reported_at": "2026-09-08",
+            "symptom": "激光雷达间歇性测距漂移，夜场巡场地图偶发错位",
+            "handling": "停用巡场任务，退回工厂检测并更换 NAV-200 雷达",
+            "change_id": "CHG-007-1"
+          }
+        ],
+        "evidence": [
+          { "evidence_id": "EV-007-1", "capability_id": "C071", "record_id": "FR-007-1", "result": "通过", "recorded_at": "2026-07-12", "uploaded_at": "2026-07-12", "config_id": "HW-007-1", "software_id": "SW-007-1" },
+          { "evidence_id": "EV-007-2", "capability_id": "C073", "record_id": "FR-007-2", "result": "通过", "recorded_at": "2026-08-03", "uploaded_at": "2026-08-05", "config_id": "HW-007-1", "software_id": "SW-007-1" },
+          { "evidence_id": "EV-007-3", "capability_id": "C072", "record_id": "FR-007-3", "result": "通过", "recorded_at": "2026-08-16", "uploaded_at": "2026-08-16", "config_id": "HW-007-1", "software_id": "SW-007-1" },
+          { "evidence_id": "EV-007-5", "capability_id": "C072", "record_id": "FR-007-4", "result": "通过", "recorded_at": "2026-09-18", "uploaded_at": "2026-09-18", "config_id": "HW-007-2", "software_id": "SW-007-1" }
+        ],
+        "certifications": [
+          {
+            "cert_id": "CERT-007-1", "capability_id": "C071", "status": "通过",
+            "certified_at": "2026-08-28", "config_id": "HW-007-1", "software_id": "SW-007-1",
+            "evidence_ids": ["EV-007-1"],
+            "signatures": [
+              { "signer": "王老师", "org_id": "ORG-SCHOOL", "signed_at": "2026-08-28" },
+              { "signer": "周馆长", "org_id": "ORG-MUSEUM", "signed_at": "2026-08-28" }
+            ]
+          },
+          {
+            "cert_id": "CERT-007-2", "capability_id": "C072", "status": "通过",
+            "certified_at": "2026-08-28", "config_id": "HW-007-1", "software_id": "SW-007-1",
+            "evidence_ids": ["EV-007-3"],
+            "signatures": [
+              { "signer": "王老师", "org_id": "ORG-SCHOOL", "signed_at": "2026-08-28" },
+              { "signer": "周馆长", "org_id": "ORG-MUSEUM", "signed_at": "2026-08-28" }
+            ]
+          },
+          {
+            "cert_id": "CERT-007-3", "capability_id": "C073", "status": "通过",
+            "certified_at": "2026-08-28", "config_id": "HW-007-1", "software_id": "SW-007-1",
+            "evidence_ids": ["EV-007-2"],
+            "signatures": [
+              { "signer": "王老师", "org_id": "ORG-SCHOOL", "signed_at": "2026-08-28" },
+              { "signer": "周馆长", "org_id": "ORG-MUSEUM", "signed_at": "2026-08-29" }
+            ]
+          }
+        ],
+        "changes": [
+          {
+            "change_id": "CHG-007-1", "kind": "硬件", "at": "2026-09-10",
+            "summary": "故障返修：激光雷达 NAV-100 更换为 NAV-200",
+            "resulting_config_id": "HW-007-2",
+            "affects": ["C072", "C073"]
+          }
+        ],
+        "retests": [
+          { "retest_id": "RT-007-1", "change_id": "CHG-007-1", "capability_id": "C072", "status": "通过", "tested_at": "2026-09-18", "evidence_id": "EV-007-5" },
+          { "retest_id": "RT-007-2", "change_id": "CHG-007-1", "capability_id": "C073", "status": "待复验", "due_at": "2026-09-30" }
+        ],
+        "codes": [
+          { "code": "GRAD-007-A", "issued_at": "2026-09-01", "cert_ids": ["CERT-007-1", "CERT-007-2", "CERT-007-3"] }
+        ],
+        "events": [
+          { "seq": 1, "at": "2026-06-10", "type": "登记", "detail": "入库建立身份档案" },
+          { "seq": 2, "at": "2026-06-15", "type": "入训", "detail": "开始导览方向培养" },
+          { "seq": 3, "at": "2026-07-12", "type": "实战", "detail": "校史展厅开放日导览" },
+          { "seq": 4, "at": "2026-08-28", "type": "能力认证", "detail": "三项能力通过多方签署" },
+          { "seq": 5, "at": "2026-09-01", "type": "毕业赋码", "code": "GRAD-007-A" },
+          { "seq": 6, "at": "2026-09-02", "type": "部署", "handover_id": "HD-001", "detail": "京杭大运河典藏馆导览岗" },
+          { "seq": 7, "at": "2026-09-08", "type": "故障", "fault_id": "FLT-007-1" },
+          { "seq": 8, "at": "2026-09-10", "type": "硬件更换", "change_id": "CHG-007-1" },
+          { "seq": 9, "at": "2026-09-18", "type": "复验通过", "retest_id": "RT-007-1" },
+          { "seq": 10, "at": "2026-09-22", "type": "试岗反馈", "detail": "典藏馆反馈：双语讲解与避障导览稳定；夜场巡场须复验通过后再开放" }
+        ],
+        "handovers": [
+          {
+            "handover_id": "HD-001",
+            "receiver_org_id": "ORG-MUSEUM",
+            "position": "典藏馆导览岗",
+            "issued_at": "2026-09-02",
+            "required_capabilities": ["C071", "C072"]
+          }
+        ]
+      },
+      {
+        "robot_id": "R-HZ-2026-012",
+        "name": "铁哨",
+        "robot_type": "巡检",
+        "capabilities": [
+          { "capability_id": "C121", "name": "表盘仪表读数巡检" },
+          { "capability_id": "C122", "name": "高温车间环境巡检" },
+          { "capability_id": "C123", "name": "设备异常声响识别" }
+        ],
+        "hardware_configs": [
+          {
+            "config_id": "HW-012-1",
+            "effective_from": "2026-05-20",
+            "components": ["红外测温模组 IRM-1", "声纹采集阵列", "工业防护底盘"]
+          },
+          {
+            "config_id": "HW-012-2",
+            "effective_from": "2026-09-14",
+            "supersedes": "HW-012-1",
+            "change_summary": "返修更换红外测温模组 IRM-1 为 IRM-2",
+            "components": ["红外测温模组 IRM-2", "声纹采集阵列", "工业防护底盘"]
+          }
+        ],
+        "software_versions": [
+          {
+            "software_id": "SW-012-1",
+            "effective_from": "2026-05-25",
+            "stack": "巡检平台 InspectMind 2.0",
+            "model": "forgeye v7"
+          },
+          {
+            "software_id": "SW-012-2",
+            "effective_from": "2026-09-02",
+            "supersedes": "SW-012-1",
+            "stack": "巡检平台 InspectMind 3.0",
+            "model": "forgeye v8（新增多语种告警）"
+          }
+        ],
+        "course_tasks": [
+          { "task_id": "T-012-1", "name": "仪表读数基础", "recorded_at": "2026-06-05", "uploaded_at": "2026-06-05", "venue": "学校" },
+          { "task_id": "T-012-2", "name": "高温环境耐受训练", "recorded_at": "2026-06-18", "uploaded_at": "2026-06-18", "venue": "华东精工装备厂" },
+          { "task_id": "T-012-3", "name": "异常声纹识别训练", "recorded_at": "2026-07-02", "uploaded_at": "2026-07-09", "venue": "工厂（离线补传）" }
+        ],
+        "field_records": [
+          { "record_id": "FR-012-1", "scenario": "工厂泵房读数巡检", "recorded_at": "2026-06-25", "uploaded_at": "2026-06-25", "config_id": "HW-012-1", "software_id": "SW-012-1" },
+          { "record_id": "FR-012-2", "scenario": "高温连班四小时巡检", "recorded_at": "2026-07-15", "uploaded_at": "2026-07-15", "config_id": "HW-012-1", "software_id": "SW-012-1" },
+          { "record_id": "FR-012-3", "scenario": "空压站异常声纹排查", "recorded_at": "2026-08-02", "uploaded_at": "2026-08-04", "config_id": "HW-012-1", "software_id": "SW-012-1" },
+          { "record_id": "FR-012-4", "scenario": "华东二厂异地试岗：读数与声纹联合复测", "recorded_at": "2026-09-06", "uploaded_at": "2026-09-06", "config_id": "HW-012-1", "software_id": "SW-012-2" },
+          { "record_id": "FR-012-5", "scenario": "返修后高温产线复测", "recorded_at": "2026-09-20", "uploaded_at": "2026-09-20", "config_id": "HW-012-2", "software_id": "SW-012-2" }
+        ],
+        "faults": [
+          {
+            "fault_id": "FLT-012-1",
+            "reported_at": "2026-09-08",
+            "symptom": "高温环境下红外测温模组反复重启，温度数据失真",
+            "handling": "退回返修；认定原高温能力证据不成立并撤销 CERT-012-2；更换 IRM-2 后重新认证",
+            "change_id": "CHG-012-3"
+          }
+        ],
+        "evidence": [
+          { "evidence_id": "EV-012-1", "capability_id": "C121", "record_id": "FR-012-1", "result": "通过", "recorded_at": "2026-06-25", "uploaded_at": "2026-06-25", "config_id": "HW-012-1", "software_id": "SW-012-1" },
+          { "evidence_id": "EV-012-2", "capability_id": "C122", "record_id": "FR-012-2", "result": "通过", "recorded_at": "2026-07-15", "uploaded_at": "2026-07-15", "config_id": "HW-012-1", "software_id": "SW-012-1" },
+          { "evidence_id": "EV-012-3", "capability_id": "C123", "record_id": "FR-012-3", "result": "通过", "recorded_at": "2026-08-02", "uploaded_at": "2026-08-04", "config_id": "HW-012-1", "software_id": "SW-012-1" },
+          { "evidence_id": "EV-012-4", "capability_id": "C121", "record_id": "FR-012-4", "result": "通过", "recorded_at": "2026-09-06", "uploaded_at": "2026-09-06", "config_id": "HW-012-1", "software_id": "SW-012-2" },
+          { "evidence_id": "EV-012-5", "capability_id": "C123", "record_id": "FR-012-4", "result": "通过", "recorded_at": "2026-09-06", "uploaded_at": "2026-09-06", "config_id": "HW-012-1", "software_id": "SW-012-2" },
+          { "evidence_id": "EV-012-6", "capability_id": "C122", "record_id": "FR-012-5", "result": "通过", "recorded_at": "2026-09-20", "uploaded_at": "2026-09-20", "config_id": "HW-012-2", "software_id": "SW-012-2" }
+        ],
+        "certifications": [
+          {
+            "cert_id": "CERT-012-1", "capability_id": "C121", "status": "通过",
+            "certified_at": "2026-08-18", "config_id": "HW-012-1", "software_id": "SW-012-1",
+            "evidence_ids": ["EV-012-1"],
+            "signatures": [
+              { "signer": "王老师", "org_id": "ORG-SCHOOL", "signed_at": "2026-08-18" },
+              { "signer": "林工", "org_id": "ORG-FACTORY", "signed_at": "2026-08-18" }
+            ]
+          },
+          {
+            "cert_id": "CERT-012-2", "capability_id": "C122", "status": "撤销",
+            "certified_at": "2026-08-18", "revoked_at": "2026-09-12",
+            "revoke_reason": "返修确认 IRM-1 模组高温失效，原认证证据不成立",
+            "config_id": "HW-012-1", "software_id": "SW-012-1",
+            "evidence_ids": ["EV-012-2"],
+            "signatures": [
+              { "signer": "王老师", "org_id": "ORG-SCHOOL", "signed_at": "2026-08-18" },
+              { "signer": "林工", "org_id": "ORG-FACTORY", "signed_at": "2026-08-18" }
+            ]
+          },
+          {
+            "cert_id": "CERT-012-3", "capability_id": "C123", "status": "通过",
+            "certified_at": "2026-08-18", "config_id": "HW-012-1", "software_id": "SW-012-1",
+            "evidence_ids": ["EV-012-3"],
+            "signatures": [
+              { "signer": "王老师", "org_id": "ORG-SCHOOL", "signed_at": "2026-08-18" },
+              { "signer": "林工", "org_id": "ORG-FACTORY", "signed_at": "2026-08-18" }
+            ]
+          },
+          {
+            "cert_id": "CERT-012-4", "capability_id": "C122", "status": "通过",
+            "certified_at": "2026-09-22", "config_id": "HW-012-2", "software_id": "SW-012-2",
+            "evidence_ids": ["EV-012-6"],
+            "signatures": [
+              { "signer": "王老师", "org_id": "ORG-SCHOOL", "signed_at": "2026-09-22" },
+              { "signer": "林工", "org_id": "ORG-FACTORY", "signed_at": "2026-09-22" },
+              { "signer": "lim", "org_id": "ORG-OVERSEAS", "signed_at": "2026-09-22" }
+            ]
+          }
+        ],
+        "changes": [
+          {
+            "change_id": "CHG-012-1", "kind": "部署地点", "at": "2026-09-01",
+            "summary": "华东一厂调往华东二厂异地试岗",
+            "affects": ["C121"]
+          },
+          {
+            "change_id": "CHG-012-2", "kind": "软件模型", "at": "2026-09-02",
+            "summary": "视觉模型 forgeye v7 升级为 v8（InspectMind 3.0）",
+            "resulting_software_id": "SW-012-2",
+            "affects": ["C121", "C123"]
+          },
+          {
+            "change_id": "CHG-012-3", "kind": "硬件", "at": "2026-09-14",
+            "summary": "返修更换红外测温模组 IRM-1 为 IRM-2",
+            "resulting_config_id": "HW-012-2",
+            "affects": ["C122"]
+          }
+        ],
+        "retests": [
+          { "retest_id": "RT-012-1", "change_id": "CHG-012-1", "capability_id": "C121", "status": "通过", "tested_at": "2026-09-06", "evidence_id": "EV-012-4" },
+          { "retest_id": "RT-012-2", "change_id": "CHG-012-2", "capability_id": "C121", "status": "通过", "tested_at": "2026-09-06", "evidence_id": "EV-012-4" },
+          { "retest_id": "RT-012-3", "change_id": "CHG-012-2", "capability_id": "C123", "status": "通过", "tested_at": "2026-09-06", "evidence_id": "EV-012-5" },
+          { "retest_id": "RT-012-4", "change_id": "CHG-012-3", "capability_id": "C122", "status": "通过", "tested_at": "2026-09-20", "evidence_id": "EV-012-6" }
+        ],
+        "codes": [
+          { "code": "GRAD-012-A", "issued_at": "2026-08-20", "cert_ids": ["CERT-012-1", "CERT-012-2", "CERT-012-3"] },
+          { "code": "GRAD-012-B", "issued_at": "2026-09-23", "cert_ids": ["CERT-012-1", "CERT-012-4", "CERT-012-3"] }
+        ],
+        "events": [
+          { "seq": 1, "at": "2026-05-15", "type": "登记", "detail": "入库建立身份档案" },
+          { "seq": 2, "at": "2026-05-25", "type": "入训", "detail": "开始巡检方向培养" },
+          { "seq": 3, "at": "2026-07-15", "type": "实战", "detail": "工厂高温连班巡检" },
+          { "seq": 4, "at": "2026-08-18", "type": "能力认证", "detail": "三项能力通过多方签署" },
+          { "seq": 5, "at": "2026-08-20", "type": "毕业赋码", "code": "GRAD-012-A" },
+          { "seq": 6, "at": "2026-08-22", "type": "部署", "detail": "华东一厂巡检岗" },
+          { "seq": 7, "at": "2026-09-01", "type": "部署地点变更", "change_id": "CHG-012-1" },
+          { "seq": 8, "at": "2026-09-02", "type": "软件升级", "change_id": "CHG-012-2" },
+          { "seq": 9, "at": "2026-09-06", "type": "复验通过", "detail": "读数与声纹能力在新模型及异地场景复验通过" },
+          { "seq": 10, "at": "2026-09-07", "type": "试岗反馈", "detail": "二厂反馈：读数与声纹告警在 v8 下准确，高温段测温偶发异常待查" },
+          { "seq": 11, "at": "2026-09-08", "type": "故障", "fault_id": "FLT-012-1" },
+          { "seq": 12, "at": "2026-09-10", "type": "退回返修", "detail": "整机退回装备厂更换红外测温模组" },
+          { "seq": 13, "at": "2026-09-12", "type": "证书撤销", "cert_id": "CERT-012-2", "detail": "原毕业码 GRAD-012-A 随之失效" },
+          { "seq": 14, "at": "2026-09-14", "type": "硬件更换", "change_id": "CHG-012-3" },
+          { "seq": 15, "at": "2026-09-20", "type": "复验通过", "retest_id": "RT-012-4" },
+          { "seq": 16, "at": "2026-09-22", "type": "重新认证", "cert_id": "CERT-012-4" },
+          { "seq": 17, "at": "2026-09-23", "type": "毕业赋码", "code": "GRAD-012-B" },
+          { "seq": 18, "at": "2026-09-24", "type": "部署", "handover_id": "HD-002", "detail": "南洋星港仓储园海外巡检岗" }
+        ],
+        "handovers": [
+          {
+            "handover_id": "HD-002",
+            "receiver_org_id": "ORG-OVERSEAS",
+            "position": "仓储园区巡检岗",
+            "issued_at": "2026-09-24",
+            "required_capabilities": ["C121", "C122", "C123"]
+          }
+        ]
+      }
+    ]
   }
 }

@@ -1,48 +1,284 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "领域资料",
+  "title": "机器人毕业能力交接领域资料",
   "type": "object",
-  "required": [
-    "domain",
-    "version",
-    "facts",
-    "entities",
-    "rules",
-    "sample"
-  ],
+  "required": ["domain", "version", "facts", "entities", "rules", "sample"],
+  "additionalProperties": false,
   "properties": {
-    "domain": {
-      "type": "string",
-      "minLength": 1
-    },
-    "version": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "facts": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "string"
-      }
-    },
-    "entities": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "string"
-      }
-    },
-    "rules": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "type": "string"
-      }
-    },
+    "domain": { "type": "string", "minLength": 1 },
+    "version": { "type": "integer", "minimum": 1 },
+    "facts": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "entities": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "rules": { "type": "array", "minItems": 1, "items": { "type": "string" } },
     "sample": {
-      "type": "object"
+      "type": "object",
+      "required": ["organizations", "robots"],
+      "additionalProperties": false,
+      "properties": {
+        "organizations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["org_id", "name", "role"],
+            "additionalProperties": false,
+            "properties": {
+              "org_id": { "type": "string" },
+              "name": { "type": "string" },
+              "role": { "type": "string" }
+            }
+          }
+        },
+        "robots": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/robot" }
+        }
+      }
     }
   },
-  "additionalProperties": false
+  "$defs": {
+    "robot": {
+      "type": "object",
+      "required": [
+        "robot_id", "name", "robot_type", "capabilities",
+        "hardware_configs", "software_versions", "course_tasks",
+        "field_records", "faults", "evidence", "certifications",
+        "changes", "retests", "codes", "events", "handovers"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "robot_id": { "type": "string" },
+        "name": { "type": "string" },
+        "robot_type": { "type": "string", "enum": ["导览", "巡检", "钢琴表演"] },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["capability_id", "name"],
+            "additionalProperties": false,
+            "properties": {
+              "capability_id": { "type": "string" },
+              "name": { "type": "string" }
+            }
+          }
+        },
+        "hardware_configs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["config_id", "effective_from", "components"],
+            "additionalProperties": false,
+            "properties": {
+              "config_id": { "type": "string" },
+              "effective_from": { "type": "string", "format": "date" },
+              "supersedes": { "type": "string" },
+              "change_summary": { "type": "string" },
+              "components": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "software_versions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["software_id", "effective_from", "stack", "model"],
+            "additionalProperties": false,
+            "properties": {
+              "software_id": { "type": "string" },
+              "effective_from": { "type": "string", "format": "date" },
+              "supersedes": { "type": "string" },
+              "stack": { "type": "string" },
+              "model": { "type": "string" }
+            }
+          }
+        },
+        "course_tasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["task_id", "name", "recorded_at", "uploaded_at", "venue"],
+            "additionalProperties": false,
+            "properties": {
+              "task_id": { "type": "string" },
+              "name": { "type": "string" },
+              "recorded_at": { "type": "string", "format": "date" },
+              "uploaded_at": { "type": "string", "format": "date" },
+              "venue": { "type": "string" }
+            }
+          }
+        },
+        "field_records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["record_id", "scenario", "recorded_at", "uploaded_at", "config_id", "software_id"],
+            "additionalProperties": false,
+            "properties": {
+              "record_id": { "type": "string" },
+              "scenario": { "type": "string" },
+              "recorded_at": { "type": "string", "format": "date" },
+              "uploaded_at": { "type": "string", "format": "date" },
+              "config_id": { "type": "string" },
+              "software_id": { "type": "string" }
+            }
+          }
+        },
+        "faults": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["fault_id", "reported_at", "symptom", "handling"],
+            "additionalProperties": false,
+            "properties": {
+              "fault_id": { "type": "string" },
+              "reported_at": { "type": "string", "format": "date" },
+              "symptom": { "type": "string" },
+              "handling": { "type": "string" },
+              "change_id": { "type": "string" }
+            }
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["evidence_id", "capability_id", "record_id", "result", "recorded_at", "uploaded_at", "config_id", "software_id"],
+            "additionalProperties": false,
+            "properties": {
+              "evidence_id": { "type": "string" },
+              "capability_id": { "type": "string" },
+              "record_id": { "type": "string" },
+              "result": { "type": "string", "enum": ["通过"] },
+              "recorded_at": { "type": "string", "format": "date" },
+              "uploaded_at": { "type": "string", "format": "date" },
+              "config_id": { "type": "string" },
+              "software_id": { "type": "string" }
+            }
+          }
+        },
+        "certifications": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["cert_id", "capability_id", "status", "certified_at", "config_id", "software_id", "evidence_ids", "signatures"],
+            "additionalProperties": false,
+            "properties": {
+              "cert_id": { "type": "string" },
+              "capability_id": { "type": "string" },
+              "status": { "type": "string", "enum": ["通过", "撤销"] },
+              "certified_at": { "type": "string", "format": "date" },
+              "revoked_at": { "type": "string", "format": "date" },
+              "revoke_reason": { "type": "string" },
+              "config_id": { "type": "string" },
+              "software_id": { "type": "string" },
+              "evidence_ids": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+              "signatures": {
+                "type": "array",
+                "minItems": 2,
+                "items": {
+                  "type": "object",
+                  "required": ["signer", "org_id", "signed_at"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "signer": { "type": "string" },
+                    "org_id": { "type": "string" },
+                    "signed_at": { "type": "string", "format": "date" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "changes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["change_id", "kind", "at", "summary", "affects"],
+            "additionalProperties": false,
+            "properties": {
+              "change_id": { "type": "string" },
+              "kind": { "type": "string", "enum": ["硬件", "软件模型", "部署地点"] },
+              "at": { "type": "string", "format": "date" },
+              "summary": { "type": "string" },
+              "resulting_config_id": { "type": "string" },
+              "resulting_software_id": { "type": "string" },
+              "affects": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+            }
+          }
+        },
+        "retests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["retest_id", "change_id", "capability_id", "status"],
+            "additionalProperties": false,
+            "properties": {
+              "retest_id": { "type": "string" },
+              "change_id": { "type": "string" },
+              "capability_id": { "type": "string" },
+              "status": { "type": "string", "enum": ["通过", "待复验"] },
+              "tested_at": { "type": "string", "format": "date" },
+              "due_at": { "type": "string", "format": "date" },
+              "evidence_id": { "type": "string" }
+            }
+          }
+        },
+        "codes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["code", "issued_at", "cert_ids"],
+            "additionalProperties": false,
+            "properties": {
+              "code": { "type": "string" },
+              "issued_at": { "type": "string", "format": "date" },
+              "cert_ids": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+            }
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["seq", "at", "type"],
+            "properties": {
+              "seq": { "type": "integer", "minimum": 1 },
+              "at": { "type": "string", "format": "date" },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "登记", "入训", "实战", "能力认证", "毕业赋码",
+                  "部署", "故障", "硬件更换", "软件升级",
+                  "部署地点变更", "复验通过", "试岗反馈",
+                  "退回返修", "证书撤销", "重新认证"
+                ]
+              },
+              "code": { "type": "string" },
+              "fault_id": { "type": "string" },
+              "change_id": { "type": "string" },
+              "retest_id": { "type": "string" },
+              "cert_id": { "type": "string" },
+              "handover_id": { "type": "string" },
+              "detail": { "type": "string" }
+            }
+          }
+        },
+        "handovers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["handover_id", "receiver_org_id", "position", "issued_at", "required_capabilities"],
+            "additionalProperties": false,
+            "properties": {
+              "handover_id": { "type": "string" },
+              "receiver_org_id": { "type": "string" },
+              "position": { "type": "string" },
+              "issued_at": { "type": "string", "format": "date" },
+              "required_capabilities": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    }
+  }
 }
