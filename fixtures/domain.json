@@ -1,26 +1,675 @@
 {
   "domain": "robot-graduation",
-  "version": 1,
+  "version": 2,
   "facts": [
-    "四台机器人经过两个多月培训和实战后获得毕业身份",
-    "机器人类型包括导览、巡检和钢琴表演",
-    "毕业后将进入场馆、学校、工厂和海外场景"
+    "杭州机器人学校与学校、工厂、海外接收方共建能力交接后台，档案随机器人身份贯穿课堂到职场",
+    "每台机器人档案保存硬件配置、软件版本、课程任务、实战记录、故障处置、能力证据与认证范围",
+    "典藏馆扫描毕业码即可看到当前能做什么、在哪些场景测试过、最近一次更换传感器后哪些能力尚未复验",
+    "毕业码只能引用签发时已经通过认证的能力，不展示笼统的毕业结论",
+    "训练资料可离线采集、恢复联网后补传，时间线按采集时间排序，而非上传时间",
+    "同一台设备的每项认证结论需要多人、跨机构签署",
+    "部署地点、模型或硬件发生变化后，相关能力进入复验，复验通过前当前结论为待复验",
+    "试岗反馈、退回返修、证书撤销均沿原身份追加，不另建档案、不擦除历史",
+    "接收方只获得岗位所需能力的当前结论，学校保留从课堂到职场的完整历史",
+    "证书被撤销或能力被降级时，毕业码解析结果同步反映最新结论"
   ],
   "entities": [
-    "机器人身份",
-    "软硬件配置",
-    "训练任务",
-    "能力认证",
-    "部署交接"
+    "机器人身份（在校、出厂、部署、返修、撤销全程不变的唯一标识）",
+    "硬件配置（部件槽位、序列号、安装与更换记录）",
+    "软件版本（固件、导航模型、语言包的生效与更替记录）",
+    "课程任务（在校训练科目与完成记录）",
+    "实战记录（学校、场馆、工厂、海外等场景的实地运行记录）",
+    "故障处置（故障现象、处置措施与关联部件）",
+    "能力证据（考核录像、评分表、演练记录，支持离线补传）",
+    "能力认证（能力范围、通过/撤销决定、多方签署、当前复验状态）",
+    "毕业赋码（只引用已通过能力的二维码及其签发记录）",
+    "部署交接（接收方、岗位能力需求与最小披露视图）",
+    "档案时间线（沿同一身份追加的全部事件）"
   ],
   "rules": [
-    "毕业码只能引用已通过能力",
-    "配置变化会触发相关能力复验",
-    "接收单位只获得岗位所需资料"
+    "赋码只能引用签发时点已通过且未被撤销的能力",
+    "通过认证必须挂载至少一份能力证据，且证据档案中真实存在",
+    "每项认证决定至少两人签署，且签署人所属机构不少于两方",
+    "证据可以离线补传，但采集时间必须早于上传时间，时间线以采集时间为准",
+    "硬件更换、模型升级或部署地点变化必须登记变更事件，并列明受影响的能力",
+    "受变更影响且尚未复验通过的能力，当前结论必须为待复验",
+    "复验通过沿原能力追加新的通过决定，不新建能力编号",
+    "撤销决定必须记录原因、多方签署，并在时间线中存在对应的撤销事件",
+    "试岗反馈必须关联已登记的接收方与部署记录",
+    "退回返修必须关联故障记录，返修中的部件更换另行登记硬件变更",
+    "时间线事件只能追加：编号唯一、按发生时间排序、机器人身份一致",
+    "接收方视图只允许出现岗位所需能力，且只含当前结论字段，不得包含部件序列号、签署明细、课程与故障内部记录"
   ],
   "sample": {
     "record_id": "demo-016",
     "status": "已登记",
-    "source": "公开示例"
+    "source": "公开示例（机构、人员、编号均为虚构，仅用于说明字段关系）",
+    "dossier": {
+      "identity": {
+        "robot_id": "RG-HZ-0117",
+        "robot_type": "导览机器人",
+        "school": "杭州机器人学校",
+        "manufacturer": "示例装备工厂",
+        "enrolled_at": "2026-04-01",
+        "graduated_at": "2026-06-28",
+        "current_location": "城市文化典藏馆"
+      },
+      "hardware_config": [
+        {
+          "slot": "H-MAIN",
+          "part": "主控板",
+          "serial": "SN-M-0117",
+          "installed_at": "2026-04-01"
+        },
+        {
+          "slot": "H-LIDAR",
+          "part": "前置激光雷达",
+          "serial": "SN-L-2201",
+          "installed_at": "2026-04-01",
+          "removed_at": "2026-08-20",
+          "note": "数据抖动故障，返修时更换"
+        },
+        {
+          "slot": "H-LIDAR",
+          "part": "前置激光雷达",
+          "serial": "SN-L-2312",
+          "installed_at": "2026-08-20"
+        },
+        {
+          "slot": "H-MIC",
+          "part": "麦克风阵列",
+          "serial": "SN-A-0311",
+          "installed_at": "2026-04-01"
+        },
+        {
+          "slot": "H-SCREEN",
+          "part": "交互显示屏",
+          "serial": "SN-S-0712",
+          "installed_at": "2026-04-01"
+        }
+      ],
+      "software_versions": [
+        {
+          "component": "nav",
+          "name": "导航模型",
+          "version": "1.4",
+          "effective_at": "2026-04-01",
+          "superseded_at": "2026-09-02"
+        },
+        {
+          "component": "nav",
+          "name": "导航模型",
+          "version": "2.0",
+          "effective_at": "2026-09-02"
+        },
+        {
+          "component": "lang-en",
+          "name": "英语语言包",
+          "version": "1.0",
+          "effective_at": "2026-04-01"
+        }
+      ],
+      "course_tasks": [
+        {
+          "task_id": "T1",
+          "name": "厅堂讲解路线",
+          "scenario": "场馆导览",
+          "completed_at": "2026-05-10"
+        },
+        {
+          "task_id": "T2",
+          "name": "中英双语问答",
+          "scenario": "海外接待",
+          "completed_at": "2026-05-22"
+        },
+        {
+          "task_id": "T3",
+          "name": "动态人流避让",
+          "scenario": "学校开放日",
+          "completed_at": "2026-05-17"
+        },
+        {
+          "task_id": "T4",
+          "name": "工厂参观通道引导",
+          "scenario": "工厂参观",
+          "completed_at": "2026-06-12"
+        },
+        {
+          "task_id": "T5",
+          "name": "户外坡道通行",
+          "scenario": "户外坡道",
+          "completed_at": "2026-06-19"
+        }
+      ],
+      "field_records": [
+        {
+          "record_id": "F1",
+          "scenario": "学校开放日",
+          "location": "学校实训楼",
+          "occurred_at": "2026-05-18",
+          "summary": "高密度人流下完成三层路线导览 42 批次",
+          "evidence_ids": ["E4"]
+        },
+        {
+          "record_id": "F2",
+          "scenario": "场馆导览",
+          "location": "市图书馆夜场",
+          "occurred_at": "2026-06-07",
+          "summary": "弱光环境固定路线讲解 6 场"
+        },
+        {
+          "record_id": "F3",
+          "scenario": "工厂参观",
+          "location": "示例装备工厂参观通道",
+          "occurred_at": "2026-06-14",
+          "summary": "沿安全通道引导参观团并在叉车交汇点让行",
+          "evidence_ids": ["E5"]
+        },
+        {
+          "record_id": "F4",
+          "scenario": "海外接待",
+          "location": "海外展会远程演示",
+          "occurred_at": "2026-07-12",
+          "summary": "英语解说与问答远程演示两场"
+        }
+      ],
+      "incidents": [
+        {
+          "incident_id": "I1",
+          "occurred_at": "2026-06-02",
+          "title": "拐角误触发急停",
+          "handling": "下调避障灵敏度参数并复测连续 20 次通过",
+          "related_capabilities": ["C3"]
+        },
+        {
+          "incident_id": "I2",
+          "occurred_at": "2026-08-18",
+          "title": "激光雷达数据抖动",
+          "handling": "退回返修，更换前置激光雷达后重连标定",
+          "related_change": "X1"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "E1",
+          "title": "场馆自主路线考核录像",
+          "scenario": "场馆导览",
+          "captured_at": "2026-06-24",
+          "uploaded_at": "2026-06-24",
+          "upload_mode": "online",
+          "task_ids": ["T1"]
+        },
+        {
+          "evidence_id": "E2",
+          "title": "中英双语问答考核记录",
+          "scenario": "海外接待",
+          "captured_at": "2026-06-23",
+          "uploaded_at": "2026-06-23",
+          "upload_mode": "online",
+          "task_ids": ["T2"]
+        },
+        {
+          "evidence_id": "E3",
+          "title": "讲解内容与仪态评分表",
+          "scenario": "场馆导览",
+          "captured_at": "2026-06-25",
+          "uploaded_at": "2026-06-25",
+          "upload_mode": "online",
+          "task_ids": ["T1"]
+        },
+        {
+          "evidence_id": "E4",
+          "title": "开放日人流避让现场记录",
+          "scenario": "学校开放日",
+          "captured_at": "2026-05-18",
+          "uploaded_at": "2026-06-20",
+          "upload_mode": "offline",
+          "note": "场地无网络，恢复联网后补传",
+          "task_ids": ["T3"],
+          "field_record_ids": ["F1"]
+        },
+        {
+          "evidence_id": "E5",
+          "title": "工厂通道安全演练记录",
+          "scenario": "工厂参观",
+          "captured_at": "2026-06-14",
+          "uploaded_at": "2026-06-14",
+          "upload_mode": "online",
+          "task_ids": ["T4"],
+          "field_record_ids": ["F3"]
+        },
+        {
+          "evidence_id": "E6",
+          "title": "典藏馆场地复测记录",
+          "scenario": "场馆导览",
+          "captured_at": "2026-07-22",
+          "uploaded_at": "2026-07-22",
+          "upload_mode": "online",
+          "note": "部署地点变更后的场地复验"
+        },
+        {
+          "evidence_id": "E7",
+          "title": "户外坡道通行测试记录",
+          "scenario": "户外坡道",
+          "captured_at": "2026-06-20",
+          "uploaded_at": "2026-06-27",
+          "upload_mode": "online",
+          "task_ids": ["T5"]
+        }
+      ],
+      "certifications": [
+        {
+          "capability_id": "C1",
+          "name": "自主路线导览",
+          "scope": "室内场馆固定与临时路线的自主行走、定点讲解与引导",
+          "current_status": "reverifying",
+          "decisions": [
+            {
+              "type": "pass",
+              "decided_at": "2026-06-25",
+              "evidence_ids": ["E1", "E3"],
+              "signatures": [
+                {
+                  "signer_id": "SCH-T-07",
+                  "organization": "杭州机器人学校",
+                  "role": "课程负责教师"
+                },
+                {
+                  "signer_id": "MFG-Q-03",
+                  "organization": "示例装备工厂",
+                  "role": "出厂质检"
+                }
+              ],
+              "config_snapshot": {
+                "hardware": {"H-LIDAR": "SN-L-2201", "H-MAIN": "SN-M-0117"},
+                "software": {"nav": "1.4", "lang-en": "1.0"}
+              }
+            },
+            {
+              "type": "pass",
+              "decided_at": "2026-07-22",
+              "evidence_ids": ["E6"],
+              "signatures": [
+                {
+                  "signer_id": "SCH-T-07",
+                  "organization": "杭州机器人学校",
+                  "role": "课程负责教师"
+                },
+                {
+                  "signer_id": "MUS-C-01",
+                  "organization": "城市文化典藏馆",
+                  "role": "接收方场地负责人"
+                }
+              ],
+              "config_snapshot": {
+                "hardware": {"H-LIDAR": "SN-L-2201"},
+                "software": {"nav": "1.4"}
+              },
+              "note": "部署到典藏馆后的场地复验通过"
+            }
+          ]
+        },
+        {
+          "capability_id": "C2",
+          "name": "多语种讲解与问答",
+          "scope": "中英双语景点讲解、常见问题问答与口音容错",
+          "current_status": "passed",
+          "decisions": [
+            {
+              "type": "pass",
+              "decided_at": "2026-06-25",
+              "evidence_ids": ["E2"],
+              "signatures": [
+                {
+                  "signer_id": "SCH-T-11",
+                  "organization": "杭州机器人学校",
+                  "role": "语言课程教师"
+                },
+                {
+                  "signer_id": "MFG-Q-03",
+                  "organization": "示例装备工厂",
+                  "role": "出厂质检"
+                }
+              ],
+              "config_snapshot": {
+                "hardware": {"H-MIC": "SN-A-0311"},
+                "software": {"lang-en": "1.0"}
+              }
+            }
+          ]
+        },
+        {
+          "capability_id": "C3",
+          "name": "动态避障",
+          "scope": "人流密集区与移动障碍物的检测、减速、绕行与急停恢复",
+          "current_status": "reverifying",
+          "decisions": [
+            {
+              "type": "pass",
+              "decided_at": "2026-06-26",
+              "evidence_ids": ["E4"],
+              "signatures": [
+                {
+                  "signer_id": "SCH-T-07",
+                  "organization": "杭州机器人学校",
+                  "role": "课程负责教师"
+                },
+                {
+                  "signer_id": "MFG-Q-03",
+                  "organization": "示例装备工厂",
+                  "role": "出厂质检"
+                }
+              ],
+              "config_snapshot": {
+                "hardware": {"H-LIDAR": "SN-L-2201"},
+                "software": {"nav": "1.4"}
+              }
+            }
+          ]
+        },
+        {
+          "capability_id": "C4",
+          "name": "工厂通道安全引导",
+          "scope": "工厂参观通道内沿安全线引导、交叉口让行与安全提示",
+          "current_status": "reverifying",
+          "decisions": [
+            {
+              "type": "pass",
+              "decided_at": "2026-06-26",
+              "evidence_ids": ["E5"],
+              "signatures": [
+                {
+                  "signer_id": "SCH-T-19",
+                  "organization": "杭州机器人学校",
+                  "role": "实训教师"
+                },
+                {
+                  "signer_id": "MFG-Q-03",
+                  "organization": "示例装备工厂",
+                  "role": "出厂质检"
+                }
+              ],
+              "config_snapshot": {
+                "hardware": {"H-LIDAR": "SN-L-2201"},
+                "software": {"nav": "1.4"}
+              }
+            }
+          ]
+        },
+        {
+          "capability_id": "C5",
+          "name": "户外坡道通行",
+          "scope": "坡度不超过 8% 的干燥户外坡道通行（毕业考核场地条件）",
+          "current_status": "revoked",
+          "decisions": [
+            {
+              "type": "pass",
+              "decided_at": "2026-06-27",
+              "evidence_ids": ["E7"],
+              "signatures": [
+                {
+                  "signer_id": "SCH-T-19",
+                  "organization": "杭州机器人学校",
+                  "role": "实训教师"
+                },
+                {
+                  "signer_id": "MFG-Q-03",
+                  "organization": "示例装备工厂",
+                  "role": "出厂质检"
+                }
+              ],
+              "config_snapshot": {
+                "hardware": {"H-LIDAR": "SN-L-2201"},
+                "software": {"nav": "1.4"}
+              }
+            },
+            {
+              "type": "revoke",
+              "decided_at": "2026-08-25",
+              "reason": "考核坡道与典藏馆实际接驳坡道参数不符，证据范围不覆盖岗位现场",
+              "signatures": [
+                {
+                  "signer_id": "SCH-T-07",
+                  "organization": "杭州机器人学校",
+                  "role": "课程负责教师"
+                },
+                {
+                  "signer_id": "MUS-C-01",
+                  "organization": "城市文化典藏馆",
+                  "role": "接收方场地负责人"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "change_events": [
+        {
+          "change_id": "X3",
+          "type": "deployment",
+          "occurred_at": "2026-07-05",
+          "summary": "部署地点由学校实训楼变更为城市文化典藏馆",
+          "affected_capabilities": ["C1"]
+        },
+        {
+          "change_id": "X1",
+          "type": "hardware",
+          "occurred_at": "2026-08-20",
+          "summary": "前置激光雷达 SN-L-2201 更换为 SN-L-2312",
+          "affected_capabilities": ["C1", "C3", "C4"]
+        },
+        {
+          "change_id": "X2",
+          "type": "software",
+          "occurred_at": "2026-09-02",
+          "summary": "导航模型由 1.4 升级为 2.0",
+          "affected_capabilities": ["C1", "C3"]
+        }
+      ],
+      "qr_codes": [
+        {
+          "code_id": "GRAD-0117",
+          "issued_at": "2026-06-28",
+          "capability_ids": ["C1", "C2", "C3", "C4"],
+          "note": "毕业码；解析结果实时返回各项能力当前结论"
+        }
+      ],
+      "receivers": [
+        {
+          "receiver_id": "RCV-MUSEUM",
+          "name": "城市文化典藏馆",
+          "kind": "场馆",
+          "post_title": "展厅导览岗",
+          "required_capabilities": ["C1", "C2", "C3"],
+          "view": [
+            {
+              "capability_id": "C1",
+              "current_status": "reverifying",
+              "scope": "室内场馆固定与临时路线的自主行走、定点讲解与引导",
+              "latest_evidence_id": "E6",
+              "decided_at": "2026-07-22",
+              "tested_scenarios": ["场馆导览"]
+            },
+            {
+              "capability_id": "C2",
+              "current_status": "passed",
+              "scope": "中英双语景点讲解、常见问题问答与口音容错",
+              "latest_evidence_id": "E2",
+              "decided_at": "2026-06-25",
+              "tested_scenarios": ["海外接待"]
+            },
+            {
+              "capability_id": "C3",
+              "current_status": "reverifying",
+              "scope": "人流密集区与移动障碍物的检测、减速、绕行与急停恢复",
+              "latest_evidence_id": "E4",
+              "decided_at": "2026-06-26",
+              "tested_scenarios": ["学校开放日"]
+            }
+          ]
+        },
+        {
+          "receiver_id": "RCV-OVERSEAS",
+          "name": "示例海外展馆",
+          "kind": "海外接收方",
+          "post_title": "双语接待岗",
+          "required_capabilities": ["C2"],
+          "view": [
+            {
+              "capability_id": "C2",
+              "current_status": "passed",
+              "scope": "中英双语景点讲解、常见问题问答与口音容错",
+              "latest_evidence_id": "E2",
+              "decided_at": "2026-06-25",
+              "tested_scenarios": ["海外接待"]
+            }
+          ]
+        }
+      ],
+      "timeline": [
+        {
+          "event_id": "EV01",
+          "type": "enrolled",
+          "occurred_at": "2026-04-01",
+          "robot_id": "RG-HZ-0117",
+          "summary": "入训建档，基线软硬件配置登记"
+        },
+        {
+          "event_id": "EV02",
+          "type": "field_record",
+          "occurred_at": "2026-05-18",
+          "robot_id": "RG-HZ-0117",
+          "summary": "学校开放日导览实战（E4 离线采集，06-20 补传）",
+          "refs": {"field_records": ["F1"], "evidence": ["E4"]}
+        },
+        {
+          "event_id": "EV03",
+          "type": "incident",
+          "occurred_at": "2026-06-02",
+          "robot_id": "RG-HZ-0117",
+          "summary": "拐角误触发急停，参数修正后复测通过",
+          "refs": {"incidents": ["I1"], "capabilities": ["C3"]}
+        },
+        {
+          "event_id": "EV04",
+          "type": "field_record",
+          "occurred_at": "2026-06-07",
+          "robot_id": "RG-HZ-0117",
+          "summary": "市图书馆夜场导览实战",
+          "refs": {"field_records": ["F2"]}
+        },
+        {
+          "event_id": "EV05",
+          "type": "field_record",
+          "occurred_at": "2026-06-14",
+          "robot_id": "RG-HZ-0117",
+          "summary": "工厂参观通道引导实战",
+          "refs": {"field_records": ["F3"], "evidence": ["E5"]}
+        },
+        {
+          "event_id": "EV06",
+          "type": "cert_decision",
+          "occurred_at": "2026-06-25",
+          "robot_id": "RG-HZ-0117",
+          "summary": "C1、C2 通过认证",
+          "refs": {"capabilities": ["C1", "C2"], "evidence": ["E1", "E2", "E3"]}
+        },
+        {
+          "event_id": "EV07",
+          "type": "cert_decision",
+          "occurred_at": "2026-06-26",
+          "robot_id": "RG-HZ-0117",
+          "summary": "C3、C4 通过认证",
+          "refs": {"capabilities": ["C3", "C4"], "evidence": ["E4", "E5"]}
+        },
+        {
+          "event_id": "EV08",
+          "type": "cert_decision",
+          "occurred_at": "2026-06-27",
+          "robot_id": "RG-HZ-0117",
+          "summary": "C5 通过认证",
+          "refs": {"capabilities": ["C5"], "evidence": ["E7"]}
+        },
+        {
+          "event_id": "EV09",
+          "type": "code_issued",
+          "occurred_at": "2026-06-28",
+          "robot_id": "RG-HZ-0117",
+          "summary": "签发毕业码，引用 C1-C4",
+          "refs": {"codes": ["GRAD-0117"], "capabilities": ["C1", "C2", "C3", "C4"]}
+        },
+        {
+          "event_id": "EV10",
+          "type": "deployment_change",
+          "occurred_at": "2026-07-05",
+          "robot_id": "RG-HZ-0117",
+          "summary": "移交城市文化典藏馆部署，C1 进入场地复验",
+          "refs": {"changes": ["X3"], "capabilities": ["C1"], "receivers": ["RCV-MUSEUM"]}
+        },
+        {
+          "event_id": "EV11",
+          "type": "field_record",
+          "occurred_at": "2026-07-12",
+          "robot_id": "RG-HZ-0117",
+          "summary": "海外展会远程英语解说演示",
+          "refs": {"field_records": ["F4"]}
+        },
+        {
+          "event_id": "EV12",
+          "type": "trial_feedback",
+          "occurred_at": "2026-07-15",
+          "robot_id": "RG-HZ-0117",
+          "summary": "典藏馆试岗反馈：强逆光下路口偶发停顿，已纳入观察",
+          "refs": {"receivers": ["RCV-MUSEUM"], "capabilities": ["C3"]}
+        },
+        {
+          "event_id": "EV13",
+          "type": "cert_decision",
+          "occurred_at": "2026-07-22",
+          "robot_id": "RG-HZ-0117",
+          "summary": "C1 场地复验通过",
+          "refs": {"capabilities": ["C1"], "evidence": ["E6"]}
+        },
+        {
+          "event_id": "EV14",
+          "type": "return_repair",
+          "occurred_at": "2026-08-18",
+          "robot_id": "RG-HZ-0117",
+          "summary": "雷达数据抖动，从典藏馆退回返修",
+          "refs": {"incidents": ["I2"], "receivers": ["RCV-MUSEUM"]}
+        },
+        {
+          "event_id": "EV15",
+          "type": "hardware_change",
+          "occurred_at": "2026-08-20",
+          "robot_id": "RG-HZ-0117",
+          "summary": "更换前置激光雷达，C1、C3、C4 待复验",
+          "refs": {"changes": ["X1"], "capabilities": ["C1", "C3", "C4"]}
+        },
+        {
+          "event_id": "EV16",
+          "type": "redeployed",
+          "occurred_at": "2026-08-23",
+          "robot_id": "RG-HZ-0117",
+          "summary": "返修完成，重新部署回典藏馆"
+        },
+        {
+          "event_id": "EV17",
+          "type": "cert_revoked",
+          "occurred_at": "2026-08-25",
+          "robot_id": "RG-HZ-0117",
+          "summary": "C5 户外坡道通行认证撤销，证据范围不覆盖现场坡道",
+          "refs": {"capabilities": ["C5"], "evidence": ["E7"]}
+        },
+        {
+          "event_id": "EV18",
+          "type": "software_change",
+          "occurred_at": "2026-09-02",
+          "robot_id": "RG-HZ-0117",
+          "summary": "导航模型升级 2.0，C1、C3 待复验",
+          "refs": {"changes": ["X2"], "capabilities": ["C1", "C3"]}
+        }
+      ]
+    }
   }
 }

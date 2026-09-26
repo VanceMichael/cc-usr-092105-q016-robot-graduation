@@ -10,6 +10,7 @@
     "rules",
     "sample"
   ],
+  "additionalProperties": false,
   "properties": {
     "domain": {
       "type": "string",
@@ -41,8 +42,399 @@
       }
     },
     "sample": {
-      "type": "object"
+      "type": "object",
+      "required": ["record_id", "status", "source", "dossier"],
+      "additionalProperties": false,
+      "properties": {
+        "record_id": { "type": "string", "minLength": 1 },
+        "status": { "type": "string", "minLength": 1 },
+        "source": { "type": "string", "minLength": 1 },
+        "dossier": { "$ref": "#/$defs/dossier" }
+      }
     }
   },
-  "additionalProperties": false
+  "$defs": {
+    "dossier": {
+      "type": "object",
+      "required": [
+        "identity",
+        "hardware_config",
+        "software_versions",
+        "course_tasks",
+        "field_records",
+        "incidents",
+        "evidence",
+        "certifications",
+        "change_events",
+        "qr_codes",
+        "receivers",
+        "timeline"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "identity": { "$ref": "#/$defs/identity" },
+        "hardware_config": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/hardware_part" }
+        },
+        "software_versions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/software_version" }
+        },
+        "course_tasks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/course_task" }
+        },
+        "field_records": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/field_record" }
+        },
+        "incidents": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/incident" }
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence" }
+        },
+        "certifications": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/certification" }
+        },
+        "change_events": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/change_event" }
+        },
+        "qr_codes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/qr_code" }
+        },
+        "receivers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/receiver" }
+        },
+        "timeline": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/timeline_event" }
+        }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "required": [
+        "robot_id",
+        "robot_type",
+        "school",
+        "manufacturer",
+        "enrolled_at",
+        "current_location"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "robot_id": { "type": "string", "minLength": 1 },
+        "robot_type": { "type": "string", "minLength": 1 },
+        "school": { "type": "string", "minLength": 1 },
+        "manufacturer": { "type": "string", "minLength": 1 },
+        "enrolled_at": { "type": "string" },
+        "graduated_at": { "type": "string" },
+        "current_location": { "type": "string", "minLength": 1 }
+      }
+    },
+    "hardware_part": {
+      "type": "object",
+      "required": ["slot", "part", "serial", "installed_at"],
+      "additionalProperties": false,
+      "properties": {
+        "slot": { "type": "string", "minLength": 1 },
+        "part": { "type": "string", "minLength": 1 },
+        "serial": { "type": "string", "minLength": 1 },
+        "installed_at": { "type": "string" },
+        "removed_at": { "type": "string" },
+        "note": { "type": "string" }
+      }
+    },
+    "software_version": {
+      "type": "object",
+      "required": ["component", "name", "version", "effective_at"],
+      "additionalProperties": false,
+      "properties": {
+        "component": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "effective_at": { "type": "string" },
+        "superseded_at": { "type": "string" },
+        "note": { "type": "string" }
+      }
+    },
+    "course_task": {
+      "type": "object",
+      "required": ["task_id", "name", "scenario", "completed_at"],
+      "additionalProperties": false,
+      "properties": {
+        "task_id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "scenario": { "type": "string", "minLength": 1 },
+        "completed_at": { "type": "string" }
+      }
+    },
+    "field_record": {
+      "type": "object",
+      "required": ["record_id", "scenario", "location", "occurred_at", "summary"],
+      "additionalProperties": false,
+      "properties": {
+        "record_id": { "type": "string", "minLength": 1 },
+        "scenario": { "type": "string", "minLength": 1 },
+        "location": { "type": "string", "minLength": 1 },
+        "occurred_at": { "type": "string" },
+        "summary": { "type": "string" },
+        "evidence_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "incident": {
+      "type": "object",
+      "required": ["incident_id", "occurred_at", "title", "handling"],
+      "additionalProperties": false,
+      "properties": {
+        "incident_id": { "type": "string", "minLength": 1 },
+        "occurred_at": { "type": "string" },
+        "title": { "type": "string", "minLength": 1 },
+        "handling": { "type": "string", "minLength": 1 },
+        "related_capabilities": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "related_change": { "type": "string" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "evidence_id",
+        "title",
+        "scenario",
+        "captured_at",
+        "uploaded_at",
+        "upload_mode"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "scenario": { "type": "string", "minLength": 1 },
+        "captured_at": { "type": "string" },
+        "uploaded_at": { "type": "string" },
+        "upload_mode": {
+          "type": "string",
+          "enum": ["online", "offline"]
+        },
+        "note": { "type": "string" },
+        "task_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "field_record_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "required": ["signer_id", "organization", "role"],
+      "additionalProperties": false,
+      "properties": {
+        "signer_id": { "type": "string", "minLength": 1 },
+        "organization": { "type": "string", "minLength": 1 },
+        "role": { "type": "string", "minLength": 1 }
+      }
+    },
+    "cert_decision": {
+      "type": "object",
+      "required": ["type", "decided_at", "signatures"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["pass", "revoke"]
+        },
+        "decided_at": { "type": "string" },
+        "evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "reason": { "type": "string", "minLength": 1 },
+        "signatures": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/signature" }
+        },
+        "config_snapshot": { "type": "object" },
+        "note": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "pass" } } },
+          "then": { "required": ["evidence_ids"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "revoke" } } },
+          "then": { "required": ["reason"] }
+        }
+      ]
+    },
+    "certification": {
+      "type": "object",
+      "required": ["capability_id", "name", "scope", "current_status", "decisions"],
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "scope": { "type": "string", "minLength": 1 },
+        "current_status": {
+          "type": "string",
+          "enum": ["passed", "reverifying", "revoked"]
+        },
+        "decisions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/cert_decision" }
+        }
+      }
+    },
+    "change_event": {
+      "type": "object",
+      "required": ["change_id", "type", "occurred_at", "summary", "affected_capabilities"],
+      "additionalProperties": false,
+      "properties": {
+        "change_id": { "type": "string", "minLength": 1 },
+        "type": {
+          "type": "string",
+          "enum": ["hardware", "software", "deployment"]
+        },
+        "occurred_at": { "type": "string" },
+        "summary": { "type": "string", "minLength": 1 },
+        "affected_capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "qr_code": {
+      "type": "object",
+      "required": ["code_id", "issued_at", "capability_ids"],
+      "additionalProperties": false,
+      "properties": {
+        "code_id": { "type": "string", "minLength": 1 },
+        "issued_at": { "type": "string" },
+        "capability_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "receiver_view_item": {
+      "type": "object",
+      "required": [
+        "capability_id",
+        "current_status",
+        "scope",
+        "latest_evidence_id",
+        "decided_at",
+        "tested_scenarios"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": { "type": "string", "minLength": 1 },
+        "current_status": {
+          "type": "string",
+          "enum": ["passed", "reverifying", "revoked"]
+        },
+        "scope": { "type": "string", "minLength": 1 },
+        "latest_evidence_id": { "type": "string", "minLength": 1 },
+        "decided_at": { "type": "string" },
+        "tested_scenarios": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "receiver": {
+      "type": "object",
+      "required": [
+        "receiver_id",
+        "name",
+        "kind",
+        "post_title",
+        "required_capabilities",
+        "view"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "receiver_id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "minLength": 1 },
+        "post_title": { "type": "string", "minLength": 1 },
+        "required_capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "view": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/receiver_view_item" }
+        }
+      }
+    },
+    "timeline_event": {
+      "type": "object",
+      "required": ["event_id", "type", "occurred_at", "robot_id", "summary"],
+      "additionalProperties": false,
+      "properties": {
+        "event_id": { "type": "string", "minLength": 1 },
+        "type": {
+          "type": "string",
+          "enum": [
+            "enrolled",
+            "course",
+            "field_record",
+            "incident",
+            "cert_decision",
+            "code_issued",
+            "deployment_change",
+            "trial_feedback",
+            "return_repair",
+            "hardware_change",
+            "software_change",
+            "redeployed",
+            "cert_revoked"
+          ]
+        },
+        "occurred_at": { "type": "string" },
+        "robot_id": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string", "minLength": 1 },
+        "refs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
 }
